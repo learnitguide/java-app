@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javapp
+  namespace: develop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: java
+        tier: frontend
+    spec:
+      containers:
+        - name: javapp
+          image: learnitguide/java-app:1.0
+          ports:
+            - containerPort: 8080
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: javapp
+  namespace: develop
+spec:
+  selector:
+    app: java
+    tier: frontend
+
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
