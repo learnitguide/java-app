@@ -1,0 +1,61 @@
+pipeline {
+agent any
+
+environment {
+KUBECONFIG="/tmp/config"
+
+
+}
+
+
+
+
+stages {
+
+stage('scm checkout') {
+  steps {
+   checkout([$class: 'GitSCM', branches: [[name: '*/develop']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/learnitguide/java-app.git']]])
+  }
+}
+
+stage('mvn build') {
+  steps {
+   sh "rm -rf target/*"
+   sh "mvn clean package"
+  }
+}
+
+
+stage('docker') {
+  steps {
+
+withCredentials([usernamePassword(credentialsId: '5b7ff65f-6e41-431f-8b63-35fd57205ca4', passwordVariable: 'dockerhubpwd', usernameVariable: 'dockerhubun')]) {
+      sh('docker login -u ${dockerhubun} -p ${dockerhubpwd}')
+}
+      sh "sh build.sh"
+  }
+}
+
+
+stage('k8s deploy') {
+  steps {
+      
+      
+      sh """
+      
+      echo ${KUBECONFIG}
+	  kubectl get ns
+	  ls -lrt
+	  chmod +x *.sh
+      sh deploy.sh
+
+      kubectl -n develop get pods
+      
+      """
+  }
+}
+
+
+}
+
+}
