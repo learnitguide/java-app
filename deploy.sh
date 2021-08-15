@@ -5,4 +5,4 @@ echo $version
 echo $branch
 
 
-kubectl -n $branch set image deployment busapp busapp=learnitguide/busapp:$version
+kubectl -n $branch set image deployment javapp javapp=learnitguide/java-app:$version
