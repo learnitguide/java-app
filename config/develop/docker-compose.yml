@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  rideapp:
+    image: learnitguide/rideapp:${DOCKER_VERSION}  # Use the version variable
+    restart: always
+    ports:
+      - "8080:80"
